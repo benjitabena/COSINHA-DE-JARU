@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <style>
+            .grid-container {
+                display: grid;
+                grid-template-columns: repeat(10, 1fr);
+                grid-template-rows: repeat(10, 1fr);
+                gap: 2px;
+                width: 400px;
+                margin: auto;
+            }
+
+            .grid-item {
+                width: 40px;
+                height: 40px;
+                background-color: white;
+                border: 1px solid #ccc;
+            }
+
+            /* Cambia el color al hacer clic */
+            .colored {
+                background-color: lightblue;
+            }
+
+            /* Cambia el cursor al pasar por encima */
+            .grid-item:hover {
+                cursor: pointer;
+            }
+        </style>
+        <title>Grilla Coloreable</title>
+    </head>
+    <body>
+        <div class="grid-container" id="gridContainer">
+            <!-- Esta sección se llena con celdas usando JavaScript -->
+        </div>
+        <script>
+            const gridContainer = document.getElementById("gridContainer");
+
+            // Llena la grilla con celdas
+            for (let i = 0; i < 10; i++) {
+                for (let j = 0; j < 10; j++) {
+                    const gridItem = document.createElement("div");
+                    gridItem.className = "grid-item";
+
+                    gridItem.addEventListener("click", () => {
+                        gridItem.classList.toggle("colored");
+                    });
+
+                    gridContainer.appendChild(gridItem);
+                }
+            }
+        </script>
+    </body>
+</html>
