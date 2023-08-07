@@ -1,57 +1,180 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="UTF-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <style>
-            .grid-container {
-                display: grid;
-                grid-template-columns: repeat(10, 1fr);
-                grid-template-rows: repeat(10, 1fr);
-                gap: 2px;
-                width: 400px;
-                margin: auto;
-            }
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Grilla 10x10 Coloreable con Paleta de Colores y Goma</title>
+  <style>
 
-            .grid-item {
-                width: 40px;
-                height: 40px;
-                background-color: white;
-                border: 1px solid #ccc;
-            }
+    .cronometro {
+      font-size: 24px;
+      position: relative;
+      top: -200px; /* Cambiar esta propiedad para ajustar la posición vertical */
+      left: 570px; /* Cambiar esta propiedad para ajustar la posición horizontal */
+    }
 
-            /* Cambia el color al hacer clic */
-            .colored {
-                background-color: lightblue;
-            }
+.my-image {
+      position: relative;
+      top: 0px; /* Cambiar esta propiedad para ajustar la posición vertical */
+      left: -50px; /* Cambiar esta propiedad para ajustar la posición horizontal */
+      width: 300px; /* Ancho de la imagen en píxeles */
+      height: 300px; /* Altura de la imagen en píxeles */
+    }
 
-            /* Cambia el cursor al pasar por encima */
-            .grid-item:hover {
-                cursor: pointer;
-            }
-        </style>
-        <title>Grilla Coloreable</title>
-    </head>
-    <body>
-        <div class="grid-container" id="gridContainer">
-            <!-- Esta sección se llena con celdas usando JavaScript -->
-        </div>
-        <script>
-            const gridContainer = document.getElementById("gridContainer");
+    body {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+      background-color: #f0f0f0;
+    }
 
-            // Llena la grilla con celdas
-            for (let i = 0; i < 10; i++) {
-                for (let j = 0; j < 10; j++) {
-                    const gridItem = document.createElement("div");
-                    gridItem.className = "grid-item";
+    .grid-container {
+      display: grid;
+      grid-template-columns: repeat(10, 30px); /* 10 columnas de 30px cada una */
+      grid-template-rows: repeat(10, 30px); /* 10 filas de 30px cada una */
+      gap: 2px; /* Espacio entre celdas */
+      background-color: #fff; /* Color de fondo de la grilla */
+      padding: 5px; /* Espacio interno para mejorar el aspecto */
+    }
 
-                    gridItem.addEventListener("click", () => {
-                        gridItem.classList.toggle("colored");
-                    });
+    .grid-item {
+      background-color: #ccc; /* Color de fondo predeterminado de las celdas */
+      width: 100%;
+      height: 100%;
+      cursor: pointer;
+    }
 
-                    gridContainer.appendChild(gridItem);
-                }
-            }
-        </script>
-    </body>
+    /* Agrega estilos específicos para celdas coloreadas */
+    .grid-item.active {
+      background-color: #ff0000; /* Color rojo para celdas activas */
+    }
+
+    .color-palette {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin-top: 10px;
+    }
+
+    .color, .eraser {
+      width: 30px;
+      height: 30px;
+      margin: 5px;
+      cursor: pointer;
+    }
+
+    .eraser {
+      background-color: #ffffff; /* Color blanco para representar la goma */
+      border: 1px solid #000; /* Borde para resaltar la goma */
+    }
+  </style>
+</head>
+<body>
+
+
+
+    <div class="cronometro" id="cronometro">00:00:00</div>
+
+    <img class="my-image" src="CATO.png" alt="Descripción de la imagen">
+
+  <div class="grid-container" id="grid-container">
+    <!-- Las celdas se agregarán aquí mediante JavaScript -->
+  </div>
+
+  <div class="color-palette" id="color-palette">
+    <!-- Paleta de colores y goma -->
+    <div class="color" style="background-color: #84d474;" onclick="setColor('#84d474')"></div>
+    <div class="color" style="background-color: #3c3c3c;" onclick="setColor('#3c3c3c')"></div>
+    <div class="color" style="background-color: #54bcb4;" onclick="setColor('#54bcb4')"></div>
+    <div class="eraser" onclick="setEraser()"></div>
+    <!-- Agrega más colores aquí si lo deseas -->
+  </div>
+
+  <form action="/procesar" method="post">
+    <button type="submit">Enviar Grilla</button>
+</form>
+  <script>
+
+
+let segundos = 0;
+    let minutos = 0;
+    let horas = 0;
+    let interval;
+
+    function iniciarCronometro() {
+      interval = setInterval(actualizarCronometro, 1000);
+    }
+
+    function detenerCronometro() {
+      clearInterval(interval);
+    }
+
+    function reiniciarCronometro() {
+      detenerCronometro();
+      segundos = 0;
+      minutos = 0;
+      horas = 0;
+      actualizarCronometro();
+    }
+
+    function actualizarCronometro() {
+      segundos++;
+      if (segundos === 60) {
+        segundos = 0;
+        minutos++;
+        if (minutos === 60) {
+          minutos = 0;
+          horas++;
+        }
+      }
+
+      const cronometroElement = document.getElementById('cronometro');
+      cronometroElement.textContent = `${agregarCero(horas)}:${agregarCero(minutos)}:${agregarCero(segundos)}`;
+    }
+
+    function agregarCero(numero) {
+      return numero < 10 ? '0' + numero : numero;
+    }
+
+    iniciarCronometro(); // Iniciar el cronómetro automáticamente al cargar la página
+  
+
+    let currentColor = '#ff0000'; // Color predeterminado para la paleta de colores
+    let eraserMode = false; // Bandera para indicar si está activada la goma
+
+    // Función para cambiar el color actual al hacer clic en un color de la paleta
+    function setColor(color) {
+      currentColor = color;
+      eraserMode = false; // Asegurarse de que la goma esté desactivada al seleccionar un color
+    }
+
+    // Función para activar o desactivar la goma
+    function setEraser() {
+      eraserMode = !eraserMode;
+    }
+
+    // Obtén el contenedor de la grilla
+    const gridContainer = document.getElementById('grid-container');
+
+    // Genera las celdas y añádelas al contenedor
+    for (let i = 0; i < 10; i++) {
+      for (let j = 0; j < 10; j++) {
+        const cell = document.createElement('div');
+        cell.classList.add('grid-item');
+        gridContainer.appendChild(cell);
+
+        // Agrega un evento para cambiar el color de la celda al hacer clic
+        cell.addEventListener('click', () => {
+          if (eraserMode) {
+            cell.style.backgroundColor = '#ccc'; // Establecer el color predeterminado para la goma
+          } else {
+            cell.style.backgroundColor = currentColor;
+          }
+        });
+      }
+    }
+  </script>
+</body>
 </html>
